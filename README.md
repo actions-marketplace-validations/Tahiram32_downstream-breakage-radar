@@ -1,4 +1,4 @@
-<![CDATA[<div align="center">
+<div align="center">
 
 # 📡 Downstream Breakage Radar
 
@@ -53,15 +53,12 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install Downstream Breakage Radar
-        run: pip install git+https://github.com/Tahiram32/downstream-breakage-radar.git
-
       - name: Scan for breaking changes
-        run: breakage-radar --repo . --base origin/main --format text
+        uses: Tahiram32/downstream-breakage-radar@main
+        with:
+          base-ref: origin/main
+          format: markdown
+          fail-on: high
 ```
 
 ### As a CLI
@@ -136,7 +133,7 @@ Findings: 3
 
 ### GitHub Action inputs
 
-When using as a GitHub Action, pass CLI flags directly in the `run` step. The action requires `fetch-depth: 0` on checkout so the full git history is available for diffing.
+When using as a GitHub Action, pass configuration via the `with` keyword. The action requires `fetch-depth: 0` on checkout so the full git history is available for diffing.
 
 ## 🔬 How It Works
 
@@ -181,4 +178,3 @@ If this tool saves your team from a breaking release, consider supporting its de
 **[→ Sponsor @Tahiram32 on GitHub](https://github.com/sponsors/Tahiram32)**
 
 Every contribution — no matter the size — helps keep this project alive and moving forward. Thank you! 🙏
-]]>

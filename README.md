@@ -130,6 +130,12 @@ Findings: 3
 | `--repo` | `.` | Path to the Git repository to scan |
 | `--base` | `origin/main` | Base ref to diff against (branch, tag, or commit SHA) |
 | `--format` | `text` | Output format: `text` for human-readable, `json` for machine-readable |
+| `--fail-on` | `high` | The risk level at which to exit with code 1 |
+| `--draft-release` | `false` | Automatically draft a GitHub release using the `gh` CLI |
+
+### Ignore Files
+
+Create a `.breakageignore` file in the root of your repository to specify glob patterns for paths you want the scanner to completely ignore (e.g. `src/internal_scripts/*` or `*_test.py`).
 
 ### GitHub Action inputs
 
@@ -148,10 +154,10 @@ When using as a GitHub Action, pass configuration via the `with` keyword. The ac
 ## 🗺️ Roadmap
 
 - [x] Diff-aware API surface detection (AST-level analysis)
-- [ ] Language-specific adapters for smarter risk scoring
-- [ ] Automated release-note drafting
+- [x] Language-specific adapters for smarter risk scoring (Python added)
+- [x] Automated release-note drafting
 - [ ] Downstream repository impact hints
-- [ ] `fail-on` threshold to block PRs above a risk level
+- [x] `fail-on` threshold to block PRs above a risk level
 - [x] Native GitHub inline annotations (Workflow Commands)
 
 ## 🤝 Contributing

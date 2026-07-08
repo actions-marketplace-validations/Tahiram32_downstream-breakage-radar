@@ -18,6 +18,10 @@ inputs:
     description: "The risk level at which to fail the step (none, low, medium, high)."
     required: false
     default: "high"
+  draft-release:
+    description: "Automatically draft a GitHub release with the generated notes."
+    required: false
+    default: "false"
 
 runs:
   using: "composite"
@@ -38,8 +42,14 @@ runs:
         # Generate inline annotations first
         breakage-radar --repo ${{ github.workspace }} --base ${{ inputs.base-ref }} --format github --fail-on none
         
+        # Build command for main report
+        CMD="breakage-radar --repo ${{ github.workspace }} --base ${{ inputs.base-ref }} --format ${{ inputs.format }} --fail-on ${{ inputs.fail-on }}"
+        if [ "${{ inputs.draft-release }}" = "true" ]; then
+          CMD="$CMD --draft-release"
+        fi
+        
         # Run and capture output
-        OUTPUT=$(breakage-radar --repo ${{ github.workspace }} --base ${{ inputs.base-ref }} --format ${{ inputs.format }} --fail-on ${{ inputs.fail-on }})
+        OUTPUT=$(eval $CMD)
         EXIT_CODE=$?
         
         # Save output to a file for potential comment usage

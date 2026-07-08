@@ -74,6 +74,26 @@ def extract_js_ts_symbols(content: str) -> dict[str, str]:
     return symbols
 
 
+def _is_js_ts_deprecated(content: str, name: str) -> bool:
+    """Check if the symbol was marked deprecated (using JSDoc @deprecated) in old content."""
+    # Matches JSDoc comment with @deprecated followed by the export declaration
+    pattern = re.compile(
+        rf'(?is)/\*\*.*?\* @deprecated.*?\*/\s*(?:export\s+)?(?:async\s+)?(?:function|class|const|let|var|interface)\s+{name}\b'
+    )
+    return bool(pattern.search(content))
+
+
+def _find_line_number(content: str, pattern_str: str) -> int:
+    """Find the line number of a pattern in the content."""
+    try:
+        match = re.search(re.escape(pattern_str), content)
+        if match:
+            return content.count("\n", 0, match.start()) + 1
+    except Exception:
+        pass
+    return 1
+
+
 def analyze_js_ts(repo_path: Path, changed_files: Iterable[str], base_ref: str) -> list[Finding]:
     """Parse JS/TS files to detect removed symbols and signature changes."""
     findings: list[Finding] = []
@@ -103,23 +123,40 @@ def analyze_js_ts(repo_path: Path, changed_files: Iterable[str], base_ref: str) 
         for key, old_sig in old_symbols.items():
             sym_type, sym_name = key.split(":", 1)
             search_url = f"https://github.com/search?q={sym_name}+language%3ATypeScript&type=code"
+            
+            lineno = _find_line_number(old_content, old_sig)
 
             if key not in new_symbols:
-                findings.append(
-                    Finding(
-                        severity="high",
-                        path=path,
-                        message=f"Removed exported {sym_type}: {sym_name}",
-                        migration_note=f"The exported {sym_type} '{sym_name}' was removed from {path}. Consumers will break. [Check downstream impact]({search_url})",
+                # Check for deprecation
+                if _is_js_ts_deprecated(old_content, sym_name):
+                    findings.append(
+                        Finding(
+                            severity="medium",
+                            path=path,
+                            message=f"Removed deprecated {sym_type}: {sym_name}",
+                            migration_note=f"The deprecated exported {sym_type} '{sym_name}' was removed from {path}. [Check downstream impact]({search_url})",
+                            line=lineno,
+                        )
                     )
-                )
+                else:
+                    findings.append(
+                        Finding(
+                            severity="high",
+                            path=path,
+                            message=f"Removed exported {sym_type}: {sym_name}",
+                            migration_note=f"The exported {sym_type} '{sym_name}' was removed from {path} without deprecation. Consumers will break. [Check downstream impact]({search_url})",
+                            line=lineno,
+                        )
+                    )
             elif old_sig != new_symbols[key]:
+                new_lineno = _find_line_number(new_content, new_symbols[key])
                 findings.append(
                     Finding(
                         severity="high",
                         path=path,
                         message=f"Exported {sym_type} signature changed: {sym_name}",
                         migration_note=f"The signature of exported {sym_type} '{sym_name}' in {path} was changed. [Check downstream impact]({search_url})",
+                        line=new_lineno,
                     )
                 )
 

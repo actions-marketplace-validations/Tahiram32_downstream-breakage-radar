@@ -133,6 +133,69 @@ def format_github(report: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
+def format_sarif(report: dict[str, Any]) -> str:
+    """Format *report* as SARIF JSON string for GitHub Code Scanning integration."""
+    rules = [
+        {
+            "id": "downstream-breakage",
+            "name": "DownstreamBreakageRule",
+            "shortDescription": {
+                "text": "Likely breaking change for downstream consumers."
+            },
+            "fullDescription": {
+                "text": "Detects changes that modify or remove public API signatures, leading to potential compile/runtime breakage for downstream library users."
+            },
+            "defaultConfiguration": {
+                "level": "warning"
+            }
+        }
+    ]
+    
+    results = []
+    for finding in report.get("findings", []):
+        sev = finding.get("severity", "medium")
+        level = "error" if sev == "high" else "warning" if sev == "medium" else "note"
+        
+        results.append({
+            "ruleId": "downstream-breakage",
+            "level": level,
+            "message": {
+                "text": f"{finding['message']}\n\nMigration Note: {finding['migration_note']}"
+            },
+            "locations": [
+                {
+                    "physicalLocation": {
+                        "artifactLocation": {
+                            "uri": finding["path"]
+                        },
+                        "region": {
+                            "startLine": finding.get("line", 1)
+                        }
+                    }
+                }
+            ]
+        })
+        
+    sarif_output = {
+        "$schema": "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json",
+        "version": "2.1.0",
+        "runs": [
+            {
+                "tool": {
+                    "driver": {
+                        "name": "Downstream Breakage Radar",
+                        "informationUri": "https://github.com/Tahiram32/downstream-breakage-radar",
+                        "rules": rules
+                    }
+                },
+                "results": results
+            }
+        ]
+    }
+    
+    return json.dumps(sarif_output, indent=2)
+
+
 def generate_badge(risk_level: str) -> str:
     """Generate SVG badge content based on the risk level."""
     colors = {

@@ -120,5 +120,31 @@ class DependencyDetectorTests(unittest.TestCase):
         self.assertIn("react", deps)
         self.assertIn("typescript", deps)
 
+class ConfigTests(unittest.TestCase):
+    def setUp(self) -> None:
+        import tempfile
+        self.test_dir = tempfile.mkdtemp()
+        
+    def tearDown(self) -> None:
+        import shutil
+        shutil.rmtree(self.test_dir)
+
+    def test_parse_config_pyproject(self) -> None:
+        from downstream_breakage_radar.config import parse_config
+        pyproject_content = """
+        [tool.breakage-radar]
+        ignored_paths = ["tests/*", "docs/*"]
+        public_dirs = ["api/", "src/public/"]
+        severity_overrides = { "Unused Python dependency" = "none", "Removed public class" = "medium" }
+        """
+        pyproject_path = Path(self.test_dir) / "pyproject.toml"
+        pyproject_path.write_text(pyproject_content, encoding="utf-8")
+        
+        cfg = parse_config(Path(self.test_dir))
+        self.assertEqual(cfg["ignored_paths"], ["tests/*", "docs/*"])
+        self.assertEqual(cfg["public_dirs"], ["api/", "src/public/"])
+        self.assertEqual(cfg["severity_overrides"]["Unused Python dependency"], "none")
+        self.assertEqual(cfg["severity_overrides"]["Removed public class"], "medium")
+
 if __name__ == "__main__":
     unittest.main()

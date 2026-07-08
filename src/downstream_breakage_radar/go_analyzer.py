@@ -59,6 +59,26 @@ def extract_go_symbols(content: str) -> dict[str, str]:
     return symbols
 
 
+def _is_go_deprecated(content: str, name: str) -> bool:
+    """Check if the symbol had a // Deprecated: comment above it in the old content."""
+    # Matches a // Deprecated: comment followed by optional comment lines and the func/type
+    pattern = re.compile(
+        rf'(?mi)//\s*Deprecated:.*?\n(?:[^\n]*\n)*?\s*(?:func|type)\s+(?:\([^)]+\)\s+)?{name}\b'
+    )
+    return bool(pattern.search(content))
+
+
+def _find_line_number(content: str, pattern_str: str) -> int:
+    """Find the line number of a pattern in the content."""
+    try:
+        match = re.search(re.escape(pattern_str), content)
+        if match:
+            return content.count("\n", 0, match.start()) + 1
+    except Exception:
+        pass
+    return 1
+
+
 def analyze_go(repo_path: Path, changed_files: Iterable[str], base_ref: str) -> list[Finding]:
     """Parse Go files to detect removed symbols and signature changes."""
     findings: list[Finding] = []
@@ -88,23 +108,41 @@ def analyze_go(repo_path: Path, changed_files: Iterable[str], base_ref: str) -> 
         for key, old_sig in old_symbols.items():
             sym_type, sym_name = key.split(":", 1)
             search_url = f"https://github.com/search?q={sym_name}+language%3AGo&type=code"
+            
+            # Find line number in original file
+            lineno = _find_line_number(old_content, old_sig)
 
             if key not in new_symbols:
-                findings.append(
-                    Finding(
-                        severity="high",
-                        path=path,
-                        message=f"Removed exported Go {sym_type}: {sym_name}",
-                        migration_note=f"The Go {sym_type} '{sym_name}' was removed from {path}. Consumers will break. [Check downstream impact]({search_url})",
+                # Check for deprecation comment
+                if _is_go_deprecated(old_content, sym_name):
+                    findings.append(
+                        Finding(
+                            severity="medium",
+                            path=path,
+                            message=f"Removed deprecated Go {sym_type}: {sym_name}",
+                            migration_note=f"The deprecated Go {sym_type} '{sym_name}' was removed from {path}. [Check downstream impact]({search_url})",
+                            line=lineno,
+                        )
                     )
-                )
+                else:
+                    findings.append(
+                        Finding(
+                            severity="high",
+                            path=path,
+                            message=f"Removed exported Go {sym_type}: {sym_name}",
+                            migration_note=f"The Go {sym_type} '{sym_name}' was removed from {path} without deprecation. Consumers will break. [Check downstream impact]({search_url})",
+                            line=lineno,
+                        )
+                    )
             elif old_sig != new_symbols[key]:
+                new_lineno = _find_line_number(new_content, new_symbols[key])
                 findings.append(
                     Finding(
                         severity="high",
                         path=path,
                         message=f"Go {sym_type} signature changed: {sym_name}",
                         migration_note=f"The signature of Go {sym_type} '{sym_name}' in {path} was changed. [Check downstream impact]({search_url})",
+                        line=new_lineno,
                     )
                 )
 

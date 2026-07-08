@@ -31,8 +31,12 @@ No external dependencies. No complex setup. Just add it to your workflow and shi
 - 🎯 **Risk scoring** — summarizes overall risk level (`none` / `low` / `medium` / `high`) at a glance
 - 🚨 **Dependency Mismatch Detection** — automatically flags missing imports (critical) or declared-but-unused packages in manifests
 - 📊 **Custom SVG Badges** — generates a clean `breakage-radar-badge.svg` representing the overall risk level for your PRs
+- ⚠️ **API Deprecation Awareness** — automatically downgrades severity of removals if the code was marked as deprecated first
+- 🛡️ **SARIF Format** — supports standardized SARIF output for GitHub's native Security/Code Scanning dashboard integration
+- 📝 **API Changelog Generator** — generates a clean markdown changelog of all public additions, removals, and changes
+- ⚙️ **In-Manifest Configuration** — manage rules, ignored paths, and custom directories directly inside `pyproject.toml` or `breakage-radar.json`
 - 🖥️ **Dual mode** — runs as a GitHub Action in CI *or* locally as a CLI
-- 📊 **Multiple output formats** — plain text, JSON, markdown PR comments, or GitHub Actions annotations
+- 📊 **Multiple output formats** — plain text, JSON, markdown PR comments, SARIF, or GitHub Actions annotations
 - 🪶 **Zero dependencies** — pure Python, nothing to install beyond the standard library
 
 ## 🚀 Quick Start
@@ -160,6 +164,7 @@ When using as a GitHub Action, pass configuration via the `with` keyword. The ac
 - [x] Automated release-note drafting
 - [x] Downstream repository impact hints
 - [x] `fail-on` threshold to block PRs above a risk level
+- [x] SARIF output for GitHub Security tab integration
 - [x] Native GitHub inline annotations (Workflow Commands)
 
 ## 🤝 Contributing

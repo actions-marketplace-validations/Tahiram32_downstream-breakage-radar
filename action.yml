@@ -22,6 +22,10 @@ inputs:
     description: "Automatically draft a GitHub release with the generated notes."
     required: false
     default: "false"
+  changelog:
+    description: "Generate a markdown API changelog (breakage-radar-changelog.md)."
+    required: false
+    default: "false"
 
 runs:
   using: "composite"
@@ -46,6 +50,9 @@ runs:
         CMD="breakage-radar --repo ${{ github.workspace }} --base ${{ inputs.base-ref }} --format ${{ inputs.format }} --fail-on ${{ inputs.fail-on }}"
         if [ "${{ inputs.draft-release }}" = "true" ]; then
           CMD="$CMD --draft-release"
+        fi
+        if [ "${{ inputs.changelog }}" = "true" ]; then
+          CMD="$CMD --changelog"
         fi
         
         # Run and capture output

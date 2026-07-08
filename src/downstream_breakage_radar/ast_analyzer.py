@@ -10,7 +10,7 @@ import ast
 import subprocess
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterable, List, Set, Dict
+from typing import Iterable
 
 from downstream_breakage_radar.scanner import Finding
 
@@ -22,6 +22,35 @@ class FuncDef:
     kwonlyargs: list[str]
     defaults_count: int
     kw_defaults_count: int
+    lineno: int
+    deprecated: bool
+
+
+@dataclass
+class ClassDef:
+    name: str
+    lineno: int
+    deprecated: bool
+
+
+def _is_deprecated(node: ast.AST) -> bool:
+    """Check if the node has a deprecation decorator or deprecation docstring."""
+    # 1. Check decorators
+    if hasattr(node, "decorator_list"):
+        for dec in node.decorator_list:
+            if isinstance(dec, ast.Name) and dec.id == "deprecated":
+                return True
+            if isinstance(dec, ast.Call) and isinstance(dec.func, ast.Name) and dec.func.id == "deprecated":
+                return True
+            if isinstance(dec, ast.Attribute) and dec.attr == "deprecated":
+                return True
+
+    # 2. Check docstring
+    docstring = ast.get_docstring(node)
+    if docstring and ("deprecated" in docstring.lower() or "deprecated" in docstring):
+        return True
+
+    return False
 
 
 def _get_public_functions(tree: ast.AST) -> dict[str, FuncDef]:
@@ -33,7 +62,6 @@ def _get_public_functions(tree: ast.AST) -> dict[str, FuncDef]:
                 args = [arg.arg for arg in node.args.args]
                 kwonlyargs = [arg.arg for arg in node.args.kwonlyargs]
                 defaults_count = len(node.args.defaults)
-                # kw_defaults can contain None, so we count non-None
                 kw_defaults_count = sum(1 for d in node.args.kw_defaults if d is not None)
                 
                 funcs[node.name] = FuncDef(
@@ -42,17 +70,23 @@ def _get_public_functions(tree: ast.AST) -> dict[str, FuncDef]:
                     kwonlyargs=kwonlyargs,
                     defaults_count=defaults_count,
                     kw_defaults_count=kw_defaults_count,
+                    lineno=getattr(node, "lineno", 1),
+                    deprecated=_is_deprecated(node),
                 )
     return funcs
 
 
-def _get_public_classes(tree: ast.AST) -> set[str]:
+def _get_public_classes(tree: ast.AST) -> dict[str, ClassDef]:
     """Extract public classes from an AST."""
-    classes = set()
+    classes = {}
     for node in ast.iter_child_nodes(tree):
         if isinstance(node, ast.ClassDef):
             if not node.name.startswith("_"):
-                classes.add(node.name)
+                classes[node.name] = ClassDef(
+                    name=node.name,
+                    lineno=getattr(node, "lineno", 1),
+                    deprecated=_is_deprecated(node),
+                )
     return classes
 
 
@@ -106,30 +140,54 @@ def analyze_python_ast(repo_path: Path, changed_files: Iterable[str], base_ref: 
         new_classes = _get_public_classes(new_tree)
 
         # 1. Check for removed classes
-        for cls in old_classes:
-            if cls not in new_classes:
-                search_url = f"https://github.com/search?q={cls}+language%3Apython&type=code"
-                findings.append(
-                    Finding(
-                        severity="high",
-                        path=path,
-                        message=f"Removed public class: {cls}",
-                        migration_note=f"The class '{cls}' was removed from {path}. Consumers will break. [Check downstream impact]({search_url})",
+        for cls_name, old_cls in old_classes.items():
+            if cls_name not in new_classes:
+                search_url = f"https://github.com/search?q={cls_name}+language%3Apython&type=code"
+                if old_cls.deprecated:
+                    findings.append(
+                        Finding(
+                            severity="medium",
+                            path=path,
+                            message=f"Removed deprecated class: {cls_name}",
+                            migration_note=f"The deprecated class '{cls_name}' was removed from {path}. [Check downstream impact]({search_url})",
+                            line=old_cls.lineno,
+                        )
                     )
-                )
+                else:
+                    findings.append(
+                        Finding(
+                            severity="high",
+                            path=path,
+                            message=f"Removed public class: {cls_name}",
+                            migration_note=f"The class '{cls_name}' was removed from {path} without deprecation. Consumers will break. [Check downstream impact]({search_url})",
+                            line=old_cls.lineno,
+                        )
+                    )
 
         # 2. Check for removed functions or signature changes
         for name, old_func in old_funcs.items():
             search_url = f"https://github.com/search?q={name}+language%3Apython&type=code"
             if name not in new_funcs:
-                findings.append(
-                    Finding(
-                        severity="high",
-                        path=path,
-                        message=f"Removed public function: {name}",
-                        migration_note=f"The function '{name}' was removed from {path}. Consumers will break. [Check downstream impact]({search_url})",
+                if old_func.deprecated:
+                    findings.append(
+                        Finding(
+                            severity="medium",
+                            path=path,
+                            message=f"Removed deprecated function: {name}",
+                            migration_note=f"The deprecated function '{name}' was removed from {path}. [Check downstream impact]({search_url})",
+                            line=old_func.lineno,
+                        )
                     )
-                )
+                else:
+                    findings.append(
+                        Finding(
+                            severity="high",
+                            path=path,
+                            message=f"Removed public function: {name}",
+                            migration_note=f"The function '{name}' was removed from {path} without deprecation. Consumers will break. [Check downstream impact]({search_url})",
+                            line=old_func.lineno,
+                        )
+                    )
             else:
                 new_func = new_funcs[name]
                 
@@ -144,6 +202,7 @@ def analyze_python_ast(repo_path: Path, changed_files: Iterable[str], base_ref: 
                             path=path,
                             message=f"Function signature changed: {name}",
                             migration_note=f"The function '{name}' in {path} now requires more positional arguments. [Check downstream impact]({search_url})",
+                            line=new_func.lineno,
                         )
                     )
                     continue
@@ -160,6 +219,7 @@ def analyze_python_ast(repo_path: Path, changed_files: Iterable[str], base_ref: 
                             path=path,
                             message=f"Function signature changed: {name}",
                             migration_note=f"The function '{name}' in {path} removed arguments: {', '.join(missing_args)}. [Check downstream impact]({search_url})",
+                            line=new_func.lineno,
                         )
                     )
 

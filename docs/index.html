@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Downstream Breakage Radar | Detect API Regressions in CI</title>
+    <meta name="description" content="A GitHub Action and CLI that detects breaking API changes before release. Uses AST analysis to generate migration notes and native GitHub inline annotations.">
+    <link rel="stylesheet" href="style.css">
+    <!-- SEO tags -->
+    <meta property="og:title" content="Downstream Breakage Radar">
+    <meta property="og:description" content="Catch API regressions and config drift before merging. AST-based analysis for Python.">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+</head>
+<body>
+    <div class="bg-glow"></div>
+    
+    <div class="container">
+        <header>
+            <div class="logo">
+                📡 <span>Breakage Radar</span>
+            </div>
+            <nav class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#how-it-works">How it Works</a>
+                <a href="https://github.com/sponsors/Tahiram32" target="_blank">Sponsor</a>
+                <a href="https://github.com/Tahiram32/downstream-breakage-radar" class="btn-github">GitHub</a>
+            </nav>
+        </header>
+
+        <section class="hero">
+            <h1>Stop breaking your <br><span class="highlight">users' code.</span></h1>
+            <p>A GitHub Action and CLI that diffs your Pull Requests, detects deleted functions and API changes using Abstract Syntax Trees, and warns you before you hit merge.</p>
+            
+            <div class="hero-ctas">
+                <a href="https://github.com/marketplace/actions/downstream-breakage-radar" class="btn-primary" target="_blank">View on Marketplace</a>
+                <a href="https://github.com/Tahiram32/downstream-breakage-radar" class="btn-secondary" target="_blank">Read the Docs</a>
+            </div>
+
+            <div class="terminal">
+                <div class="terminal-header">
+                    <div class="dot red"></div>
+                    <div class="dot yellow"></div>
+                    <div class="dot green"></div>
+                </div>
+                <div class="terminal-body">
+                    <div class="terminal-line"><span class="terminal-highlight">$</span> <span class="terminal-command">breakage-radar --repo . --base origin/main</span></div>
+                    <div class="terminal-line">Scanning for downstream breakage risks...</div>
+                    <div class="terminal-line">Parsing Abstract Syntax Trees (AST)...</div>
+                    <div class="terminal-error">
+                        <div class="terminal-line">❌ [High] src/api/client.py: Removed public function: execute_query</div>
+                        <div class="terminal-line">   Migration note: The function 'execute_query' was removed from src/api/client.py. Consumers will break. <a href="#" style="color:#60a5fa">Check downstream impact</a>.</div>
+                        <br>
+                        <div class="terminal-line">Error: Overall risk level 'high' exceeds threshold 'high'.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="features">
+            <h2 class="section-title">Enterprise-Grade Detection</h2>
+            <div class="grid">
+                
+                <div class="card">
+                    <div class="card-icon">🧠</div>
+                    <h3>AST-Based Analysis</h3>
+                    <p>Regex isn't enough. We parse Python Abstract Syntax Trees (AST) to detect exactly when parameters are renamed, defaults are removed, or classes are deleted.</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon">🛡️</div>
+                    <h3>Native GitHub Annotations</h3>
+                    <p>Breaking changes magically appear as inline `::error` annotations directly on the exact lines of code inside the GitHub "Files changed" tab.</p>
+                    <div class="pr-mockup">
+                        <div class="pr-annotation">
+                            <div>❌</div>
+                            <div>
+                                <strong style="color:var(--text-main);display:block;margin-bottom:4px;">Removed public function: send_alert</strong>
+                                The function 'send_alert' was removed from api.py. Consumers will break.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon">📝</div>
+                    <h3>Auto-Drafted Releases</h3>
+                    <p>Pass `--draft-release` and the tool will automatically draft a beautifully formatted GitHub Release with all the detected breaking changes and migration steps.</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon">🕵️</div>
+                    <h3>Downstream Impact Hints</h3>
+                    <p>Curious who you just broke? Breakage Radar automatically generates GitHub Code Search links to show you every repository calling the function you just deleted.</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon">🙈</div>
+                    <h3>.breakageignore Support</h3>
+                    <p>Large monorepo? No problem. Use a `.breakageignore` file to filter out test suites, internal scripts, and private packages using glob patterns.</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon">🪶</div>
+                    <h3>Zero Dependencies</h3>
+                    <p>Written entirely in Python using only standard libraries. It installs in milliseconds and adds virtually zero overhead to your CI/CD pipeline.</p>
+                </div>
+
+            </div>
+        </section>
+
+        <footer>
+            <div class="footer-links" style="margin-bottom: 2rem;">
+                <a href="https://github.com/Tahiram32/downstream-breakage-radar">GitHub</a>
+                <a href="https://github.com/marketplace/actions/downstream-breakage-radar">Marketplace</a>
+                <a href="https://github.com/Tahiram32/downstream-breakage-radar/blob/main/LICENSE">MIT License</a>
+            </div>
+            <p>Maintained by Tahiram32. <a href="https://github.com/sponsors/Tahiram32" style="color:var(--text-main);text-decoration:none;">Support this project <span class="sponsor-heart">❤️</span></a></p>
+        </footer>
+    </div>
+</body>
+</html>

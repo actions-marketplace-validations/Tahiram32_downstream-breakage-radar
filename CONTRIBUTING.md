@@ -29,7 +29,7 @@ Thank you for your interest in contributing! This guide will help you get set up
 
 ### Prerequisites
 
-- **Python 3.10+** (3.11 recommended)
+- **Python 3.10+** (3.13 recommended)
 - **Git** (for the diff-based scanning)
 
 ### Setup
@@ -50,9 +50,6 @@ The test suite uses the built-in `unittest` framework:
 
 ```bash
 # Run all tests
-python -m pytest tests/ -v
-
-# Or with unittest directly
 python -m unittest discover -s tests -v
 ```
 

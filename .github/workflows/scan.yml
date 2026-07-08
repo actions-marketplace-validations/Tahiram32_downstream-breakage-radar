@@ -1,0 +1,28 @@
+name: Breakage Radar
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install package
+        run: python -m pip install -e .
+      - name: Run breakage radar
+        run: |
+          if git rev-parse origin/main >/dev/null 2>&1; then
+            python -m downstream_breakage_radar.cli --repo . --base origin/main --format text
+          else
+            echo "No origin/main ref found (initial push). Skipping diff-based scan."
+          fi

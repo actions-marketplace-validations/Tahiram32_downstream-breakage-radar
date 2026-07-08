@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "downstream-breakage-radar"
+version = "0.1.0"
+description = "A GitHub Action and CLI that detects breaking changes before release and generates plain English migration notes"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+  { name = "Tahiram32" }
+]
+dependencies = []
+
+[project.scripts]
+breakage-radar = "downstream_breakage_radar.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+

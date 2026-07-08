@@ -1,4 +1,4 @@
-<![CDATA[---
+---
 name: Bug Report
 about: Report a bug to help us improve Downstream Breakage Radar
 title: "[Bug] "
@@ -34,4 +34,3 @@ What actually happened. Include the full output or error message.
 ## Additional context
 
 Add any other context about the problem here (screenshots, log output, related issues, etc.).
-]]>

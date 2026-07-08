@@ -1,4 +1,4 @@
-<![CDATA[---
+---
 name: Feature Request
 about: Suggest an idea for Downstream Breakage Radar
 title: "[Feature] "
@@ -33,4 +33,3 @@ Describe any alternative solutions or workarounds you've considered.
 ## Additional context
 
 Add any other context, screenshots, or references (e.g., links to similar tools or discussions).
-]]>

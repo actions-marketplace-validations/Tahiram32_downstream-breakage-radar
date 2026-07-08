@@ -1,4 +1,4 @@
-<![CDATA[# Security Policy
+# Security Policy
 
 ## Supported Versions
 
@@ -48,4 +48,3 @@ We follow coordinated disclosure. Once a fix is available, we will:
 3. Credit the reporter (with their permission)
 
 Thank you for helping keep Downstream Breakage Radar and its users safe. 🔒
-]]>

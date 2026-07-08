@@ -1,4 +1,4 @@
-<![CDATA[## Description
+## Description
 
 <!-- What does this PR do? Why is this change needed? -->
 
@@ -30,4 +30,3 @@
 ## Screenshots / output
 
 <!-- If applicable, add screenshots or paste command output -->
-]]>

@@ -1,4 +1,4 @@
-<![CDATA[# Contributing to Downstream Breakage Radar
+# Contributing to Downstream Breakage Radar
 
 Thank you for your interest in contributing! This guide will help you get set up and make your first contribution.
 
@@ -110,4 +110,3 @@ Feature ideas are welcome! Use the [feature request template](https://github.com
 ---
 
 Thank you for helping make Downstream Breakage Radar better! ❤️
-]]>

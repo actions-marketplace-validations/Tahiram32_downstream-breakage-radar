@@ -4,7 +4,7 @@ import argparse
 import sys
 from pathlib import Path
 
-from downstream_breakage_radar import ast_analyzer, changelog, config, dependency_detector, diff_analyzer, go_analyzer, reporter, scanner, ts_analyzer
+from breakguard import ast_analyzer, changelog, config, dependency_detector, diff_analyzer, go_analyzer, reporter, scanner, ts_analyzer
 
 
 def build_parser() -> argparse.ArgumentParser:

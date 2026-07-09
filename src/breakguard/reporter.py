@@ -184,7 +184,7 @@ def format_sarif(report: dict[str, Any]) -> str:
                 "tool": {
                     "driver": {
                         "name": "Downstream Breakage Radar",
-                        "informationUri": "https://github.com/Tahiram32/downstream-breakage-radar",
+                        "informationUri": "https://github.com/Tahiram32/breakguard",
                         "rules": rules
                     }
                 },

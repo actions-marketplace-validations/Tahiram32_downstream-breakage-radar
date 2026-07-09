@@ -10,7 +10,7 @@ from __future__ import annotations
 import re
 from typing import List
 
-from downstream_breakage_radar.scanner import Finding
+from breakguard.scanner import Finding
 
 
 # ---------------------------------------------------------------------------

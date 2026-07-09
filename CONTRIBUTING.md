@@ -17,8 +17,8 @@ Thank you for your interest in contributing! This guide will help you get set up
 1. **Fork** the repository on GitHub
 2. **Clone** your fork locally:
    ```bash
-   git clone https://github.com/<your-username>/downstream-breakage-radar.git
-   cd downstream-breakage-radar
+   git clone https://github.com/<your-username>/breakguard.git
+   cd breakguard
    ```
 3. **Create a branch** for your change:
    ```bash
@@ -89,7 +89,7 @@ Update README with JSON output example
 
 ## Reporting Bugs
 
-Please use the [bug report template](https://github.com/Tahiram32/downstream-breakage-radar/issues/new?template=bug_report.md) when filing issues. Include:
+Please use the [bug report template](https://github.com/Tahiram32/breakguard/issues/new?template=bug_report.md) when filing issues. Include:
 
 - Steps to reproduce
 - Expected vs. actual behavior
@@ -98,7 +98,7 @@ Please use the [bug report template](https://github.com/Tahiram32/downstream-bre
 
 ## Suggesting Features
 
-Feature ideas are welcome! Use the [feature request template](https://github.com/Tahiram32/downstream-breakage-radar/issues/new?template=feature_request.md) and describe:
+Feature ideas are welcome! Use the [feature request template](https://github.com/Tahiram32/breakguard/issues/new?template=feature_request.md) and describe:
 
 - The problem you're trying to solve
 - How you'd like the feature to work

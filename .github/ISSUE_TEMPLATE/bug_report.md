@@ -28,7 +28,7 @@ What actually happened. Include the full output or error message.
 - **OS**: [e.g., Ubuntu 22.04, macOS 14, Windows 11]
 - **Python version**: [e.g., 3.11.4]
 - **Git version**: [e.g., 2.42.0]
-- **downstream-breakage-radar version**: [e.g., 0.1.0]
+- **breakguard version**: [e.g., 0.1.0]
 - **Installation method**: [e.g., `pip install`, `pip install -e .`, GitHub Action]
 
 ## Additional context

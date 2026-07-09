@@ -4,7 +4,7 @@
 
 **Detect breaking changes before they break your users.**
 
-[![Breakage Radar](https://github.com/Tahiram32/downstream-breakage-radar/actions/workflows/scan.yml/badge.svg)](https://github.com/Tahiram32/downstream-breakage-radar/actions/workflows/scan.yml)
+[![Breakage Radar](https://github.com/Tahiram32/breakguard/actions/workflows/scan.yml/badge.svg)](https://github.com/Tahiram32/breakguard/actions/workflows/scan.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-3776AB.svg)](https://www.python.org/downloads/)
 [![GitHub Sponsors](https://img.shields.io/badge/Sponsor-%E2%9D%A4-ea4aaa.svg)](https://github.com/sponsors/Tahiram32)
@@ -63,7 +63,7 @@ jobs:
           fetch-depth: 0
 
       - name: Scan for breaking changes
-        uses: Tahiram32/downstream-breakage-radar@v0.5.0
+        uses: Tahiram32/breakguard@v0.5.0
         with:
           base-ref: origin/main
           format: markdown
@@ -75,7 +75,7 @@ jobs:
 
 ```bash
 # Install from PyPI
-pip install downstream-breakage-radar
+pip install breakguard
 
 # Scan the current repo against origin/main
 breakage-radar --repo . --base origin/main
@@ -93,7 +93,7 @@ breakage-radar --repo . --base origin/main --format sarif > results.sarif
 Or run directly as a module:
 
 ```bash
-python -m downstream_breakage_radar.cli --repo . --base origin/main
+python -m breakguard.cli --repo . --base origin/main
 ```
 
 ## 📋 Example Output

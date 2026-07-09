@@ -3,7 +3,7 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "downstream-breakage-radar"
+name = "breakguard"
 version = "0.5.0"
 description = "A GitHub Action and CLI that detects breaking changes before release and generates plain English migration notes"
 readme = "README.md"
@@ -12,7 +12,7 @@ license = { text = "MIT" }
 authors = [
   { name = "Tahiram32" }
 ]
-urls = { Repository = "https://github.com/Tahiram32/downstream-breakage-radar" }
+urls = { Repository = "https://github.com/Tahiram32/breakguard" }
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
@@ -27,7 +27,7 @@ classifiers = [
 dependencies = []
 
 [project.scripts]
-breakage-radar = "downstream_breakage_radar.cli:main"
+breakage-radar = "breakguard.cli:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}

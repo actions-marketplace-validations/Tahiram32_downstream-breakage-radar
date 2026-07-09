@@ -119,7 +119,7 @@ def detect_risk(changed_files: Iterable[str]) -> list[Finding]:
     """Analyse *changed_files* and return findings based on path heuristics.
 
     This function only inspects file names/paths.  For diff-level analysis
-    use :func:`downstream_breakage_radar.diff_analyzer.analyze_diff`.
+    use :func:`breakguard.diff_analyzer.analyze_diff`.
     """
 
     findings: list[Finding] = []

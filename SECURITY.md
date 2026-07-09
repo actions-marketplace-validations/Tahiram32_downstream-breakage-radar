@@ -15,7 +15,7 @@ If you discover a security vulnerability in Downstream Breakage Radar, **please 
 
 Instead, report it privately:
 
-1. **GitHub Security Advisories (preferred)**: Use the [Report a vulnerability](https://github.com/Tahiram32/downstream-breakage-radar/security/advisories/new) feature on GitHub
+1. **GitHub Security Advisories (preferred)**: Use the [Report a vulnerability](https://github.com/Tahiram32/breakguard/security/advisories/new) feature on GitHub
 2. **Direct contact**: Reach out to [@Tahiram32](https://github.com/Tahiram32) via GitHub
 
 ### What to include

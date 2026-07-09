@@ -9,7 +9,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Iterable
 
-from downstream_breakage_radar import ast_analyzer, go_analyzer, ts_analyzer
+from breakguard import ast_analyzer, go_analyzer, ts_analyzer
 
 
 def generate_changelog(repo_path: Path, changed_files: Iterable[str], base_ref: str) -> str:

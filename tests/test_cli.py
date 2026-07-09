@@ -9,8 +9,8 @@ SRC = ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-from downstream_breakage_radar.scanner import detect_risk, summarize
-from downstream_breakage_radar.diff_analyzer import analyze_diff
+from breakguard.scanner import detect_risk, summarize
+from breakguard.diff_analyzer import analyze_diff
 
 
 class DetectRiskTests(unittest.TestCase):
@@ -25,7 +25,7 @@ class DetectRiskTests(unittest.TestCase):
         self.assertEqual(report["risk_level"], "none")
 
     def test_version_recommendation(self) -> None:
-        from downstream_breakage_radar.scanner import recommend_version_bump
+        from breakguard.scanner import recommend_version_bump
         bump, version = recommend_version_bump("1.2.3", "high")
         self.assertEqual(bump, "major")
         self.assertEqual(version, "2.0.0")
@@ -54,7 +54,7 @@ class DiffAnalyzerTests(unittest.TestCase):
         self.assertEqual(findings[0].severity, "high")
         self.assertIn("removed_func", findings[0].message)
 
-from downstream_breakage_radar.ast_analyzer import analyze_python_ast
+from breakguard.ast_analyzer import analyze_python_ast
 
 class AstAnalyzerTests(unittest.TestCase):
     def test_removed_ast_function(self) -> None:
@@ -62,7 +62,7 @@ class AstAnalyzerTests(unittest.TestCase):
 
 class GoAnalyzerTests(unittest.TestCase):
     def test_extract_go_symbols(self) -> None:
-        from downstream_breakage_radar.go_analyzer import extract_go_symbols
+        from breakguard.go_analyzer import extract_go_symbols
         content = """
         package main
         // Exported function
@@ -79,7 +79,7 @@ class GoAnalyzerTests(unittest.TestCase):
 
 class JsTsAnalyzerTests(unittest.TestCase):
     def test_extract_js_ts_symbols(self) -> None:
-        from downstream_breakage_radar.ts_analyzer import extract_js_ts_symbols
+        from breakguard.ts_analyzer import extract_js_ts_symbols
         content = """
         export function compute(x, y) { return x + y; }
         export class Client {}
@@ -94,7 +94,7 @@ class JsTsAnalyzerTests(unittest.TestCase):
 
 class DependencyDetectorTests(unittest.TestCase):
     def test_parse_requirements_txt(self) -> None:
-        from downstream_breakage_radar.dependency_detector import parse_requirements_txt
+        from breakguard.dependency_detector import parse_requirements_txt
         content = """
         requests>=2.0.0
         numpy==1.22
@@ -107,7 +107,7 @@ class DependencyDetectorTests(unittest.TestCase):
         self.assertIn("scipy", deps)
 
     def test_parse_package_json_deps(self) -> None:
-        from downstream_breakage_radar.dependency_detector import parse_package_json_deps
+        from breakguard.dependency_detector import parse_package_json_deps
         content = """{
             "dependencies": {
                 "react": "^18.0.0"
@@ -130,7 +130,7 @@ class ConfigTests(unittest.TestCase):
         shutil.rmtree(self.test_dir)
 
     def test_parse_config_pyproject(self) -> None:
-        from downstream_breakage_radar.config import parse_config
+        from breakguard.config import parse_config
         pyproject_content = """
         [tool.breakage-radar]
         ignored_paths = ["tests/*", "docs/*"]

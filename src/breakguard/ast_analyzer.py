@@ -12,7 +12,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable
 
-from downstream_breakage_radar.scanner import Finding
+from breakguard.scanner import Finding
 
 
 @dataclass

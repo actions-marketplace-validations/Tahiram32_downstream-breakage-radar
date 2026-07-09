@@ -13,7 +13,7 @@ import re
 import sys
 from pathlib import Path
 
-from downstream_breakage_radar.scanner import Finding
+from breakguard.scanner import Finding
 
 # Simple regexes to find imports
 PY_IMPORT_PAT = re.compile(r'(?m)^\s*(?:from|import)\s+([a-zA-Z0-9_]+)')
@@ -187,7 +187,7 @@ def analyze_dependencies(repo_path: Path, ignore_patterns: list[str] = None) -> 
     for imp in imported_py:
         # Ignore project's own package name if imported
         proj_name = repo_path.name.lower().replace("_", "-")
-        if imp == proj_name or imp == "downstream-breakage-radar":
+        if imp == proj_name or imp == "breakguard":
             continue
         # Also ignore local imports (subdirectories of current directory)
         local_dir = repo_path / imp.replace("-", "_")
